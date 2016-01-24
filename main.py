@@ -116,10 +116,6 @@ def train(network, learn_rate0, momentum):
 	epoch = 0
 	epoch_offset = 0
 
-	best_valid_error_rate = np.inf
-	best_params = network.snapshot()
-	best_params_epoch = 0
-
 	train_erros = []
 	train_loss = []
 	train_nll = []
@@ -146,6 +142,10 @@ def train(network, learn_rate0, momentum):
 		epoch_offset = batch
 	except:
 		epoch, number_of_epochs, batch = (0, 3, 0)
+
+	best_valid_error_rate = np.inf
+	best_params = network.snapshot()
+	best_params_epoch = 0
 
 	# training loop
 	try:
@@ -238,3 +238,5 @@ print("DONE")
 sys.stdout.flush()
 
 train(network, 4e-3, 0.8)
+
+print("Test error rate is %f%%" %(compute_error_rate(cifar_test_stream, network.predict) * 100.0,))
