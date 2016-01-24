@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import numpy
+import sys
 
 def fresh_name(name):
     D = {}
