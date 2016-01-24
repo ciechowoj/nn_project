@@ -237,6 +237,6 @@ network = compile(nn)
 print("DONE")
 sys.stdout.flush()
 
-train(network, 4e-3, 0.8)
+train(network, 1e-4, 0.6)
 
 print("Test error rate is %f%%" %(compute_error_rate(cifar_test_stream, network.predict) * 100.0,))
