@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import numpy
 
 def fresh_name(name):
@@ -14,6 +16,28 @@ def fresh_name(name):
         D[name] = 1
         
     return name + str(D[name])
+
+def print_hline():
+        cell_width = 20
+        print("|{}|{}|{}|{}|{}|".format(
+            "-" * (cell_width + 2), 
+            "-" * (cell_width - 1), 
+            "-" * (cell_width - 1), 
+            "-" * cell_width, 
+            "-" * cell_width))
+
+def print_header():
+    print("|{:^22}|{:^19}|{:^19}|{:^20}|{:^20}|".format(
+        "epoch//batch",
+        "validation error",
+        "avg. train error",
+        "avg. train nll",
+        "avg. train loss"))
+
+def print_record(record):
+    print("|{:^21} |{:>18.2f} |{:>18.2f} |{:>19g} |{:>19g} |".format(*record))
+    print_hline()
+    sys.stdout.flush()
 
 def compute_error_rate(stream, predict):
     errs = 0.0
