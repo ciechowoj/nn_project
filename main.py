@@ -237,4 +237,4 @@ network = compile(nn)
 print("DONE")
 sys.stdout.flush()
 
-train(network, 4e-3, 0.8)
+train(network, 1e-2, 0.99)
