@@ -7,7 +7,8 @@ from fuel.schemes import SequentialScheme, ShuffledScheme
 import numpy as np
 import numpy
 import types
-
+import scipy
+import scipy.ndimage
 
 def cifar10_mean():
 	train = CIFAR10(("train",), subset=slice(None, 40000))
@@ -17,6 +18,13 @@ def cifar10_mean():
 	X = numpy.mean(X, 0)
 
 	return X
+
+def randrot(X, angle):
+    def rotate(x, angle):
+        scipyrot = scipy.ndimage.interpolation.rotate
+        return scipyrot(x.T, angle, axes = (0, 1), reshape=False, output=None, order=1, mode='wrap').T
+    
+    return numpy.array([rotate(x, a) for x, a in zip(X, numpy.random.normal(loc = 0.0, scale = angle, size = len(X)))])
 
 def prepare_cifar10():
 	class Dataset:
@@ -35,19 +43,7 @@ def prepare_cifar10():
 			for X, Y in self._get_epoch_iterator():
 				# 0 degrees
 				X -= mean[numpy.newaxis,:,:,:]
-				yield X, Y
-
-				# 90 degrees
-				X = numpy.rot90(X.T).T
-				yield X, Y
-
-				# 180 degrees
-				X = numpy.rot90(X.T).T
-				yield X, Y
-
-				# 270 degrees
-				X = numpy.rot90(X.T).T
-				yield X, Y
+				yield randrot(X, 25), Y
 
 		stream._get_epoch_iterator = stream.get_epoch_iterator
 		stream.get_epoch_iterator = types.MethodType(get_epoch_iterator, stream)
