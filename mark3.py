@@ -229,13 +229,13 @@ def train(network, learn_rate0, momentum):
 
 nn = compose(
 	conv2D(3, 128, 5),   # 30x30
-	conv2D(128, 128, 5), # 28x28
-	max_pool_2d(2),		 # 14x14
-	conv2D(128, 128, 5), # 12x12
-	conv2D(128, 128, 5), # 10x10
-	max_pool_2d(2),	     # 5x5
+	max_pool_2d(2),		 # 15x15
+	conv2D(128, 128, 3), # 14x14
+	conv2D(128, 128, 3), # 13x13
+	conv2D(128, 128, 3), # 12x12
+	max_pool_2d(2),	     # 6x6
 	flatten(),
-	xaffine(512, 512),
+	xaffine(2048, 512),
 	bnorm(512, 0.1),
 	relu(),
 	xaffine(512, 512),
