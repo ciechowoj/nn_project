@@ -203,6 +203,8 @@ def train(network, learn_rate0, momentum):
 			records.append(record)
 			print_record(record)
 			
+		if (epoch + 1) % 25 and len(sys.argv) == 2:
+			network.dump("{}.{}.bn".format(sys.argv[1], time.strftime("%d_%b_%Y_%H_%M_%S")), records)
 
 	except KeyboardInterrupt:
 		pass
