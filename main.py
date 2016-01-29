@@ -30,7 +30,9 @@ def compile(template):
 	
 	model_parameters = template.params
 
-	log_probs = template(X)
+	test = theano.tensor.scalar('test', dtype = 'float32')
+
+	log_probs = template(X, test)
 
 	predictions = theano.tensor.argmax(log_probs, axis = 1)
 
@@ -59,9 +61,6 @@ def compile(template):
 		v_new = momentum * v - learn_rate * g
 		p_new = p + v_new
 		updates += [(v, v_new), (p, p_new)]
-			
-	def step_ex(X, Y, learn_rate, momentum):
-		return step(X, Y, learn_rate, momentum)
 	
 	def init_parameters():
 		rng = numpy.random.RandomState(1234)
@@ -73,15 +72,22 @@ def compile(template):
 			v.set_value(np.zeros_like(v.get_value()))
 			
 	step = theano.function(
-		[X, Y, learn_rate, momentum],
+		[X, Y, learn_rate, momentum, test],
 		[cost, error_rate, nll, weight_decay],
 		updates = updates, 
-		allow_input_downcast = True)
+		allow_input_downcast = True,
+		on_unused_input = 'warn')
 			
 	predict = theano.function([X], predictions)
 	
 	init_parameters()
 	
+	def step_ex(X, Y, learn_rate, momentum):
+		return step(X, Y, learn_rate, momentum, 0)
+
+	def predict_ex(X):
+		return predict(X, 1)
+
 	class Network:
 		def snapshot(self):
 			return ([p.get_value(borrow = False) for p in self.params], [v.get_value(borrow = False) for v in self.velocities])
@@ -105,7 +111,7 @@ def compile(template):
 
 	network = Network()
 	network.step = step_ex
-	network.predict = predict
+	network.predict = predict_ex
 	network.params = model_parameters
 	network.velocities = velocities
 
