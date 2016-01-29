@@ -96,7 +96,7 @@ def maxout(num_inputs, num_outputs, degree, name = None):
     
     return fprop
     
-def bnorm(num_inputs, alpha, name = None):
+def bnorm(num_inputs, alpha, epsilon = 1e-4, name = None):
     name = name if name else fresh_name("?")
 
     def make_vparam(pname, c):
@@ -110,7 +110,6 @@ def bnorm(num_inputs, alpha, name = None):
     betas = make_vparam("betas", 0)
     means = make_vparam("mean_avgs", 0)
     inv_stds = make_vparam("inv_std_avgs", 0)
-    epsilons = make_vparam("epsilons", 1e-4)
 
     def lerp(x, y, a):
         return (1 - a) * x + a * y
@@ -122,7 +121,7 @@ def bnorm(num_inputs, alpha, name = None):
         btest = tensor.lt(0, test)
 
         X_means = X.mean(0)
-        X_inv_stds = tensor.inv(tensor.sqrt(X.var(0)) + epsilons)
+        X_inv_stds = tensor.inv(tensor.sqrt(X.var(0)) + epsilon)
 
         means_clone = theano.clone(means, share_inputs = False)
         inv_stds_clone = theano.clone(inv_stds, share_inputs = False)
@@ -139,7 +138,7 @@ def bnorm(num_inputs, alpha, name = None):
         return (X - ds(X_means)) * ds(X_inv_stds) * ds(gammas) + ds(betas)
 
     fprop.params = [gammas, betas]
-    fprop.variables = [means, inv_stds, epsilons]
+    fprop.variables = [means, inv_stds]
 
     return fprop
 

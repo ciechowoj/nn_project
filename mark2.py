@@ -90,7 +90,10 @@ def compile(template):
 
 	class Network:
 		def snapshot(self):
-			return ([p.get_value(borrow = False) for p in self.params], [v.get_value(borrow = False) for v in self.velocities])
+			return (
+				[p.get_value(borrow = False) for p in self.params], 
+				[v.get_value(borrow = False) for v in self.velocities],
+				[v.get_value(borrow = False) for v in self.variables])
 	
 		def load(self, source, file = True):
 			if file and isinstance(source, str):
@@ -104,6 +107,9 @@ def compile(template):
 
 				for v, s in zip(self.velocities, source[1]):
 					v.set_value(s, borrow = False)
+
+				for v, s in zip(self.variables, source[2]):
+					v.set_value(s, borrow = False)
 	
 		def dump(self, path, records = None):
 			with open(path, 'wb+') as file:
@@ -114,6 +120,7 @@ def compile(template):
 	network.predict = predict_ex
 	network.params = model_parameters
 	network.velocities = velocities
+	network.variables = template.variables
 
 	return network
 
@@ -231,6 +238,7 @@ nn = compose(
 	relu(), 
 	max_pool_2d(2),
 	flatten(),
+	bnorm(512, 0.1),
 	xaffine(512, 625),
 	bnorm(625, 0.1),
 	relu(),
