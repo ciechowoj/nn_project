@@ -228,10 +228,12 @@ def train(network, learn_rate0, momentum):
 	#legend()
 
 nn = compose(
-	conv2D(3, 128, 3), 
+	conv2D(3, 128, 3),
+	bnorm2D(128, 0.1), 
 	relu(), 
 	max_pool_2d(2),
-	conv2D(128, 128, 3), 
+	conv2D(128, 128, 3),
+	bnorm2D(128, 0.1),
 	relu(), 
 	max_pool_2d(2),
 	conv2D(128, 128, 3),
