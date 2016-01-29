@@ -142,6 +142,51 @@ def bnorm(num_inputs, alpha, epsilon = 1e-4, name = None):
 
     return fprop
 
+def bnorm2D(num_input_filters, alpha, epsilon = 1e-4, name = None):
+    name = name if name else fresh_name("?")
+
+    def make_vparam(pname, c):
+        shape = (num_input_filters,)
+        xname = "{}.{}".format(name, pname)
+        param = theano.shared(numpy.zeros(shape, dtype='float32'), name = xname)
+        param.tag.initializer = Constant(c)
+        return param
+
+    gammas = make_vparam("gammas", 1)
+    means = make_vparam("mean_avgs", 0)
+    inv_stds = make_vparam("inv_std_avgs", 0)
+
+    def lerp(x, y, a):
+        return (1 - a) * x + a * y
+
+    def ds(v):
+        return v.dimshuffle('x', 0, 'x', 'x')
+
+    def fprop(X, test):
+        btest = tensor.lt(0, test)
+
+        X_means = X.mean([0, 2, 3])
+        X_inv_stds = tensor.inv(tensor.sqrt(X.var([0, 2, 3])) + epsilon)
+
+        means_clone = theano.clone(means, share_inputs = False)
+        inv_stds_clone = theano.clone(inv_stds, share_inputs = False)
+
+        means_clone.default_update = ifelse(btest, means, lerp(means, X_means, alpha))
+        inv_stds_clone.default_update = ifelse(btest, inv_stds, lerp(inv_stds, X_inv_stds, alpha))
+    
+        X_means += 0 * means_clone
+        X_inv_stds += 0 * inv_stds_clone
+
+        X_means = ifelse(btest, means, X_means)
+        X_inv_stds = ifelse(btest, inv_stds, X_inv_stds)
+
+        return (X - ds(X_means)) * ds(X_inv_stds) * ds(gammas)
+
+    fprop.params = [gammas]
+    fprop.variables = [means, inv_stds]
+
+    return fprop
+
 def softmax():
     def fprop(X, test):
         return theano.tensor.nnet.softmax(X)
