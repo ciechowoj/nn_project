@@ -26,6 +26,23 @@ def randrot(X, angle):
     
     return numpy.array([rotate(x, a) for x, a in zip(X, numpy.random.normal(loc = 0.0, scale = angle, size = len(X)))])
 
+def augument(X, angle):
+    def rotate(x, angle):
+        scipyrot = scipy.ndimage.interpolation.rotate
+        return scipyrot(x.T, angle, axes = (0, 1), reshape=False, output=None, order=1, mode='wrap').T
+    
+    def flip(x):
+        return numpy.array([numpy.fliplr(c) for c in x])
+    
+    def normal(size):
+        return numpy.random.normal(loc = 0.0, scale = angle, size = size)
+    
+    X = numpy.array([rotate(x, a) for x, a in zip(X, normal(len(X)))])
+    
+    X = numpy.array([flip(x) if a < 0 else x for x, a in zip(X, normal(len(X)))])
+    
+    return X
+
 def prepare_cifar10():
 	class Dataset:
 		pass
@@ -43,7 +60,7 @@ def prepare_cifar10():
 			for X, Y in self._get_epoch_iterator():
 				# 0 degrees
 				X -= mean[numpy.newaxis,:,:,:]
-				yield randrot(X, 25), Y
+				yield augument(X, 25), Y
 
 		stream._get_epoch_iterator = stream.get_epoch_iterator
 		stream.get_epoch_iterator = types.MethodType(get_epoch_iterator, stream)
