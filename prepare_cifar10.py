@@ -33,7 +33,20 @@ def prepare_cifar10():
 	def patch_get_epoch_iterator(stream):
 		def get_epoch_iterator(self):
 			for X, Y in self._get_epoch_iterator():
+				# 0 degrees
 				X -= mean[numpy.newaxis,:,:,:]
+				yield X, Y
+
+				# 90 degrees
+				X = numpy.rot90(X.T).T
+				yield X, Y
+
+				# 180 degrees
+				X = numpy.rot90(X.T).T
+				yield X, Y
+
+				# 270 degrees
+				X = numpy.rot90(X.T).T
 				yield X, Y
 
 		stream._get_epoch_iterator = stream.get_epoch_iterator
