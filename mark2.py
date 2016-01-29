@@ -238,11 +238,13 @@ nn = compose(
 	relu(), 
 	max_pool_2d(2),
 	flatten(),
-	bnorm(512, 0.1),
-	xaffine(512, 625),
+	xaffine(512, 512),
 	bnorm(625, 0.1),
 	relu(),
-	xaffine(625, 10),
+	xaffine(512, 512),
+	bnorm(625, 0.1),
+	relu(),
+	xaffine(512, 10),
 	relu(),
 	softmax()
 	)
