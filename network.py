@@ -30,6 +30,13 @@ class Network:
 		with open(source, 'rb') as file:
 			try:
 				snapshot, records = pickle.load(file)
+
+				snapshot = {
+					"params" : snapshot[0],
+					"velocities" : snapshot[1],
+					"variables" : snapshot[2]
+				}
+
 				self.load(snapshot, False)
 				return records
 			except KeyError:
