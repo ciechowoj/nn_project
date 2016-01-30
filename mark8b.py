@@ -36,15 +36,13 @@ nn = compose(
 	conv2D(128, 128, 3),	# 14 x 14
 	bnorm2D(128, 0.1),		
 	relu(), 
-	max_pool_2d(2),
-	conv2D(128, 128, 5),
+	max_pool_2d(2),			# 7 x 7
+	conv2D(128, 128, 5),    # 5 x 5
 	flatten(),
 	xaffine(512, 512),
 	bnorm(512, 0.1),
 	relu(),
-	xaffine(512, 512),
-	bnorm(512, 0.1),
-	relu(),
+	maxout(512, 512, 4),
 	xaffine(512, 10),
 	relu(),
 	softmax()
