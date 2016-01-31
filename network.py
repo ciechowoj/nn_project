@@ -27,26 +27,29 @@ class Network:
 		return result
 
 	def _load(self, source):
-		with open(source, 'rb') as file:
 			try:
-				snapshot, records = pickle.load(file)
+				with open(source, 'rb') as file:
+					snapshot, records = pickle.load(file)
 
-				snapshot = {
-					"params" : snapshot[0],
-					"velocities" : snapshot[1],
-					"variables" : snapshot[2]
-				}
+					snapshot = {
+						"params" : snapshot[0],
+						"velocities" : snapshot[1],
+						"variables" : snapshot[2]
+					}
 
-				self.load(snapshot, False)
-				return records
+					self.load(snapshot, False)
+					return records
 			except KeyError:
 				pass
+			except pickle.UnpicklingError:
+				pass
 
-			file.seek(0)
-			data = json.load(file)
-			self.load(data["snapshot"], False)
+			with open(source, 'r') as file:
+				file.seek(0)
+				data = json.load(file)
+				self.load(data["snapshot"], False)
 
-			return data["record"]
+				return data["record"]
 
 	def load(self, source, file = True):
 		if file and isinstance(source, str):

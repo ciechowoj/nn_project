@@ -40,12 +40,16 @@ def print_record(record):
     print_hline()
     sys.stdout.flush()
 
-def compute_error_rate(stream, predict):
+def compute_error_rate(stream, predict, message = None):
     errs = 0.0
     num_samples = 0.0
     for X, Y in stream.get_epoch_iterator():
         errs += (predict(X) != Y.ravel()).sum()
         num_samples += Y.shape[0]
+        if message:
+            print(message.format(int(num_samples / 20000 * 100)), end = "")
+            sys.stdout.flush()
+
     return errs / num_samples
 
 #
