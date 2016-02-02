@@ -109,7 +109,10 @@ def compile(template):
 		allow_input_downcast = True,
 		on_unused_input = 'warn')
 			
-	predict = theano.function([X, test], predictions)
+	predict = theano.function(
+		[X, test], 
+		predictions,
+		on_unused_input = 'warn')
 	
 	init_parameters()
 	
