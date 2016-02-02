@@ -127,6 +127,6 @@ def compile(template):
 	network.predict = predict_ex
 	network.params = model_parameters
 	network.velocities = velocities
-	network.variables = template.variables
+	network.variables = getattr(template, "variables", [])
 
 	return network
