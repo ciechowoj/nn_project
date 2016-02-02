@@ -63,4 +63,4 @@ error_rate = compute_error_rate(
 print("\rComputing test error rate... DONE")
 sys.stdout.flush()
 
-print("Test error rate is {}%.".format(error_rate * 100.0,))
+print("Test error rate is {:.2f}%.".format(error_rate * 100.0,))

@@ -65,6 +65,17 @@ def prepare_cifar10():
 		stream._get_epoch_iterator = stream.get_epoch_iterator
 		stream.get_epoch_iterator = types.MethodType(get_epoch_iterator, stream)
 
+	def patch_get_epoch_iterator_test(stream):
+		def get_epoch_iterator(self):
+			for X, Y in self._get_epoch_iterator():
+				# 0 degrees
+				X -= mean[numpy.newaxis,:,:,:]
+				yield X, Y
+
+		stream._get_epoch_iterator = stream.get_epoch_iterator
+		stream.get_epoch_iterator = types.MethodType(get_epoch_iterator, stream)
+
+
 	result.train = train = CIFAR10(("train",), subset = slice(None, 40000))
 	result.train_stream = DataStream.default_stream(
 		result.train,
@@ -84,6 +95,6 @@ def prepare_cifar10():
 		result.test, 
 		iteration_scheme = SequentialScheme(result.test.num_examples, 100))
 
-	patch_get_epoch_iterator(result.test_stream)
+	patch_get_epoch_iterator_test(result.test_stream)
 
 	return result

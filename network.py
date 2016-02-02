@@ -44,12 +44,13 @@ class Network:
 			except pickle.UnpicklingError:
 				pass
 
-			with open(source, 'r') as file:
-				file.seek(0)
+			with open("{}.network".format(path), 'r') as file:
 				data = json.load(file)
-				self.load(data["snapshot"], False)
+				self.load(data, False)
 
-				return data["record"]
+			with open("{}.records".format(path), 'r') as file:
+				data = json.load(file)
+				return data
 
 	def load(self, source, file = True):
 		if file and isinstance(source, str):
@@ -65,8 +66,11 @@ class Network:
 				v.set_value(s, borrow = False)
 
 	def dump(self, path, records = None):
-		with open(path, 'wb+') as file:
-			json.dump({ "snapshot" : self.snapshot(), "record" : records }, file, sort_keys=True, indent=4, separators=(',', ': '))
+		with open("{}.network".format(path), 'w+') as file:
+			json.dump(self.snapshot(), file, sort_keys=True, indent=4, separators=(',', ': '))
+
+		with open("{}.records".format(path), 'w+') as file:
+			json.dump(records, file, sort_keys=True, indent=4, separators=(',', ': '))			
 
 def compile(template):
 	X = theano.tensor.tensor4('X', dtype = 'float32')

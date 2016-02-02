@@ -12,7 +12,7 @@ from layers import *
 from network import *
 from train import *
 
-def train(network, test_stream, validation_stream, learn_rate0, momentum):
+def train(network, test_stream, validation_stream, learn_rate0, momentum, path):
 	batch = 0
 	epoch = 0
 	epoch_offset = 0
@@ -89,15 +89,12 @@ def train(network, test_stream, validation_stream, learn_rate0, momentum):
 			records.append(record)
 			print_record(record)
 			
-		if (epoch + 1) % 25 and len(sys.argv) == 2:
-			network.dump("{}.{}.bn".format(sys.argv[1], time.strftime("%d_%b_%Y_%H_%M_%S")), records)
-
 	except KeyboardInterrupt:
 		pass
 	except:
-		network.dump("{}.nn".format(time.strftime("%d_%b_%Y_%H_%M_%S")), records)
+		network.dump("{}_{}".format(path, time.strftime("%d_%H_%M_%S")), records)
 		raise
 
 	print("Setting network parameters from after epoch %d" %(best_params_epoch))
 	network.load(best_params)
-	network.dump("{}.nn".format(time.strftime("%d_%b_%Y_%H_%M_%S")), records)
+	network.dump("{}_{}".format(path, time.strftime("%d_%H_%M_%S")), records)
