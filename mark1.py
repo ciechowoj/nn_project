@@ -5,7 +5,7 @@ from __future__ import print_function
 from main import run
 from layers import *
 
-nn = compose(
+network = compose(
     conv2D(3, 64, 5), 
     relu(), 
     max_pool_2d(2),
