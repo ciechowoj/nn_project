@@ -27,11 +27,11 @@ class Network:
 		return result
 
 	def _load(self, source):
-		with open("{}.network".format(path), 'r') as file:
+		with open("{}.network".format(source), 'r') as file:
 			data = json.load(file)
 			self.load(data, False)
 
-		with open("{}.records".format(path), 'r') as file:
+		with open("{}.records".format(source), 'r') as file:
 			data = json.load(file)
 			return data
 
