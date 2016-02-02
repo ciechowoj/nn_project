@@ -60,7 +60,7 @@ def prepare_cifar10():
 			for X, Y in self._get_epoch_iterator():
 				# 0 degrees
 				X -= mean[numpy.newaxis,:,:,:]
-				yield X, Y # augument(X, 25), Y
+				yield augument(X, 25), Y
 
 		stream._get_epoch_iterator = stream.get_epoch_iterator
 		stream.get_epoch_iterator = types.MethodType(get_epoch_iterator, stream)
