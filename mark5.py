@@ -230,18 +230,20 @@ def train(network, learn_rate0, momentum):
 	#legend()
 
 nn = compose(
-	conv2D(3, 128, 3),		# 31 x 31 
+	conv2D(3, 128, 3),
+	bnorm2D(128, 0.1), 
 	relu(), 
-	conv2D(128, 128, 3),	# 30 x 30
-	bnorm2D(128, 0.1),		
+	max_pool_2d(2),
+	conv2D(128, 128, 3),
+	bnorm2D(128, 0.1),
 	relu(), 
-	max_pool_2d(2),			# 15 x 15
-	conv2D(128, 128, 3),	# 14 x 14
-	bnorm2D(128, 0.1),		
+	max_pool_2d(2),
+	conv2D(128, 128, 3),
+	bnorm2D(128, 0.1),
 	relu(), 
-	max_pool_2d(2),			# 7 x 7
-	conv2D(128, 128, 5),    # 5 x 5
+	max_pool_2d(2),
 	flatten(),
+	dropout(),
 	xaffine(512, 512),
 	bnorm(512, 0.1),
 	relu(),

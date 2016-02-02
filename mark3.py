@@ -203,8 +203,6 @@ def train(network, learn_rate0, momentum):
 			records.append(record)
 			print_record(record)
 			
-		if (epoch + 1) % 25 and len(sys.argv) == 2:
-			network.dump("{}.{}.bn".format(sys.argv[1], time.strftime("%d_%b_%Y_%H_%M_%S")), records)
 
 	except KeyboardInterrupt:
 		pass
@@ -230,19 +228,14 @@ def train(network, learn_rate0, momentum):
 	#legend()
 
 nn = compose(
-	conv2D(3, 128, 3),		# 31 x 31 
-	relu(), 
-	conv2D(128, 128, 3),	# 30 x 30
-	bnorm2D(128, 0.1),		
-	relu(), 
-	max_pool_2d(2),			# 15 x 15
-	conv2D(128, 128, 3),	# 14 x 14
-	bnorm2D(128, 0.1),		
-	relu(), 
-	max_pool_2d(2),			# 7 x 7
-	conv2D(128, 128, 5),    # 5 x 5
+	conv2D(3, 128, 5),   # 30x30
+	max_pool_2d(2),		 # 15x15
+	conv2D(128, 128, 3), # 14x14
+	conv2D(128, 128, 3), # 13x13
+	conv2D(128, 128, 3), # 12x12
+	max_pool_2d(2),	     # 6x6
 	flatten(),
-	xaffine(512, 512),
+	xaffine(2048, 512),
 	bnorm(512, 0.1),
 	relu(),
 	xaffine(512, 512),
