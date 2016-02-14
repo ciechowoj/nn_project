@@ -16,7 +16,7 @@ network = compose(
 	max_pool_2d(2),
 	conv2D(128, 128, 5),
 	flatten(),
-	xaffine(512, 512),
+	xaffine(128, 512),
 	bnorm(512, 0.1),
 	relu(),
 	xaffine(512, 512),

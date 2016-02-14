@@ -35,6 +35,6 @@ def run(template, path):
 	print("DONE")
 	sys.stdout.flush()
 
-	train(network, cifar_train_stream, cifar_validation_stream, 4e-3, 0.7, path)
+	train(network, cifar_train_stream, cifar_validation_stream, 1e-3, 0.7, path)
 
 	print("Test error rate is %f%%" %(compute_error_rate(cifar_test_stream, network.predict) * 100.0,))
